@@ -209,7 +209,7 @@ namespace car_test.Models
             }
         }
 
-        public List<carData> getCarDataList(string carStartupSelected, string[] carDataTypeSelected, int startPrimaryValue = 0, int endPrimaryValue = 0)
+        public List<carData> getCarDataList(string carStartupSelected, string[] carDataTypeAllSelected, int startPrimaryValue = 0, int endPrimaryValue = 0)
         {
             try
             {
@@ -219,25 +219,25 @@ namespace car_test.Models
 
 
                 string sql = @"SELECT `Date / Time`, ";
-                for (int i=0; i < carDataTypeSelected.Length; i++)
+                for (int i=0; i < carDataTypeAllSelected.Length; i++)
                 {
-                    if (carDataTypeSelected[i] == "primaryValue")
+                    if (carDataTypeAllSelected[i] == "primaryValue")
                         sql = sql + "`primary_value`";
-                    else if (carDataTypeSelected[i] == "SPD")
+                    else if (carDataTypeAllSelected[i] == "SPD")
                         sql = sql + "`SPD`";
-                    else if (carDataTypeSelected[i] == "engineSpeed")
+                    else if (carDataTypeAllSelected[i] == "engineSpeed")
                         sql = sql + "`Engine Speed`";
-                    else if (carDataTypeSelected[i] == "instantFuel")
+                    else if (carDataTypeAllSelected[i] == "instantFuel")
                         sql = sql + "`Instant Fuel`";
-                    else if (carDataTypeSelected[i] == "averageFuel")
+                    else if (carDataTypeAllSelected[i] == "averageFuel")
                         sql = sql + "`Average Fuel`";
-                    else if (carDataTypeSelected[i] == "ODO")
+                    else if (carDataTypeAllSelected[i] == "ODO")
                         sql = sql + "`ODO`";
-                    else if (carDataTypeSelected[i] == "idleHours")
+                    else if (carDataTypeAllSelected[i] == "idleHours")
                         sql = sql + "`Idle Hours`";
-                    else if (carDataTypeSelected[i] == "idleFuel")
+                    else if (carDataTypeAllSelected[i] == "idleFuel")
                         sql = sql + "`Idle Fuel`";
-                    if (i != carDataTypeSelected.Length - 1)
+                    if (i != carDataTypeAllSelected.Length - 1)
                         sql = sql + ", ";
                 }
                 if (startPrimaryValue == 0 || startPrimaryValue == 0)
@@ -253,9 +253,9 @@ namespace car_test.Models
                     {
                         carData data = new carData();
                         data.DateTime = dr["Date / Time"].ToString();
-                        for (int i=0; i < carDataTypeSelected.Length; i++)
+                        for (int i=0; i < carDataTypeAllSelected.Length; i++)
                         {
-                            switch (carDataTypeSelected[i])//switch (比對的運算式)
+                            switch (carDataTypeAllSelected[i])//switch (比對的運算式)
                             {
                                 case "primaryValue":
                                     data.primaryValue = int.Parse(dr["primary_value"].ToString());

@@ -20,6 +20,8 @@
     <link href="~/lib/jquery-ui-1.13.2.custom/jquery-ui.css" rel="stylesheet" />
     <script src="~/lib/jquery-ui-1.13.2.custom/jquery-ui.min.js"></script>
     <script src="~/lib/jquery-ui-1.13.2.custom/jquery-ui.js"></script>
+    <script src="~/js/jquery.blockui.js"></script>
+
 
 
 </head>
@@ -52,68 +54,98 @@
     </select><br>
 
     <label>車輛啟動區間</label>
-<select id="carStartupSelect" name="carStartupSelect">
+    <select id="carStartupSelect" name="carStartupSelect">
         <option value="">請選擇車輛啟動區間</option>
     </select>
 </div>
-<p>請選擇要檢視的資料類別 (複選) :</p>
-<div style="padding-bottom: 2%;">
-    <input type="checkbox" name="carDataType" id="o1" value="SPD">
-    <label for="o1">Speed</label>
 
-    <input type="checkbox" name="carDataType" id="o2" value="engineSpeed">
-    <label for="o2">Engine Speed</label>
-    <input type="checkbox" name="carDataType" id="o3" value="instantFuel">
-    <label for="o3">Instant Fuel</label>
-    <input type="checkbox" name="carDataType" id="o4" value="averageFuel">
-    <label for="o4">Average Fuel</label>
-    <input type="checkbox" name="carDataType" id="o5" value="ODO">
-    <label for="o5">ODO</label>
-    <input type="checkbox" name="carDataType" id="o6" value="idleHours">
-    <label for="o6">Idle Hours</label>
-    <input type="checkbox" name="carDataType" id="o7" value="idleFuel">
-    <label for="o7">Idle Fuel</label>
+<div class="selectArea">
+    <label>可選擇任意兩項類別以繪製同一張圖表進行分析：</label><br />
+    <select id="carDataTypeSelect1" name="carDataTypeSelect">
+        <option value="">請選擇車輛資料類別</option>
+    </select>、
+    <select id="carDataTypeSelect2" name="carDataTypeSelect">
+        <option value="">請選擇車輛資料類別</option>        
+    </select><br />
+    <button type="reset" id="clearCarDataTypeSelect" class="btn btn-warning smallButton" style="margin-top: 1%;">取消</button>
 </div>
-<p>可輸入各資料類別要hight light的數值 :</p>
 <div>
-    <div style="float: left; margin-right: 1%">
-        Speed<br />
-        <input type="text" name="SPDOver" id="SPDOver" disabled="disabled" style="width: 50px;">
-    </div>
-    <div style="float: left; margin-right: 1%">
-        Engine Speed<br />
-        <input type="text" name="engineSpeedOver" id="engineSpeedOver" disabled="disabled" style="width: 100px;">
-    </div>
-    <div style="float: left; margin-right: 1%">
-        Instant Fuel<br />
-        <input type="text" name="instantFuelOver" id="instantFuelOver" disabled="disabled" style="width: 70px;">
-    </div>
-    <div style="float: left; margin-right: 1%">
-        Average Fuel<br />
-        <input type="text" name="averageFuelOver" id="averageFuelOver" disabled="disabled" style="width: 70px;">
-    </div>
-    <div style="float: left; margin-right: 1%">
-        ODO<br />
-        <input type="text" name="ODOOver" id="ODOOver" disabled="disabled" style="width: 60px;">
-    </div>
-    <div style="float: left; margin-right: 1%">
-        Idle Hours<br />
-        <input type="text" name="idleHoursOver" id="idleHoursOver" disabled="disabled" style="width: 60px;">
-    </div>
-    <div>
-        Idle Fuel<br />
-        <input type="text" name="idleFuelOver" id="idleFuelOver" disabled="disabled" style="width: 60px;">
-    </div>
+
 </div>
+<div class="selectArea">
+    <table>
+        <tr>
+            請選擇車輛資料類別和填入凸顯範圍 (複選) :
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" name="carDataType" id="o1" value="SPD">
+                <label for="o1">Speed</label>
+            </td>
+            <td>
+                ><input type="text" name="SPDOver" id="SPDOver" disabled="disabled" style="width: 70px;" placeholder="可留空">
+            </td>
+            <td>
+                <input type="checkbox" name="carDataType" id="o2" value="engineSpeed">
+                <label for="o2">Engine Speed</label>
+            </td>
+            <td>
+                ><input type="text" name="engineSpeedOver" id="engineSpeedOver" disabled="disabled" style="width: 70px;" placeholder="可留空">   
+            </td>
+            <td>
+                <input type="checkbox" name="carDataType" id="o3" value="instantFuel">
+                <label for="o3">Instant Fuel</label>
+            </td>
+            <td>
+                ><input type="text" name="instantFuelOver" id="instantFuelOver" disabled="disabled" style="width: 70px;" placeholder="可留空">
+            </td>
+        </tr>
+        <tr>            
+            <td>
+                <input type="checkbox" name="carDataType" id="o4" value="averageFuel">
+                <label for="o4">Average Fuel</label>
+            </td>
+            <td>
+                ><input type="text" name="averageFuelOver" id="averageFuelOver" disabled="disabled" style="width: 70px;" placeholder="可留空">
+            </td>
+            <td>
+                <input type="checkbox" name="carDataType" id="o5" value="ODO">
+                <label for="o5">ODO</label>
+            </td>
+            <td>
+                ><input type="text" name="ODOOver" id="ODOOver" disabled="disabled" style="width: 70px;" placeholder="可留空">
+            </td>
+            <td>
+                <input type="checkbox" name="carDataType" id="o6" value="idleHours">
+                <label for="o6">Idle Hours</label>
+            </td>
+            <td>
+                ><input type="text" name="idleHoursOver" id="idleHoursOver" disabled="disabled" style="width: 70px;" placeholder="可留空">
+            </td>
+        </tr>
+        <tr>            
+            <td>
+                <input type="checkbox" name="carDataType" id="o7" value="idleFuel">
+                <label for="o7">Idle Fuel</label>
+            </td>
+            <td>
+                ><input type="text" name="idleFuelOver" id="idleFuelOver" disabled="disabled" style="width: 70px;" placeholder="可留空">
+            </td>
+        </tr>
+    </table>
+    <button type="submit" id="checkboxAllSelect" class="btn btn-primary smallButton">全選</button>
+    <button type="reset" id="checkboxAllCancel" class="btn btn-warning smallButton">取消</button>
+</div>
+
 <div style="margin-top: 2%">
     <button type="submit" id="requestSubmit" class="btn btn-primary">確定</button>
     <button type="reset" id="clearSubmit" class="btn btn-warning">清除</button>
 </div>
 @*</form>*@
 
-<div id="CO2Compute" style="box-sizing: border-box; border-width:4px; border-radius:10px; border-style:solid; border-color:#FFDA96; margin-top: 2%; padding: 2%;">
+<div id="CO2Compute" style="border-box; border-width:4px; border-radius:10px; border-style:solid; border-color:#FFDA96; margin-top: 2%; padding: 2%;">
     <div>
-        選擇車輛啟動區間以計算CO2
+        請選擇車輛啟動區間以計算CO2
     </div>
     <p>
         <label for="amount">車輛啟動區間：</label><br>
@@ -139,6 +171,21 @@
 
     </div>
 </div>
+
+<style>
+    button.smallButton{
+        font-size: 12px;
+        height: 30px;
+        text-align:center;
+    }
+    div.selectArea{
+        margin-top: 1%; 
+        padding: 0.5%;
+        border:2px #cccccc solid;
+        border-radius:5px; 
+        display:inline-block;
+    }
+</style>
 
 <script>
     $(document).ready(function () {
@@ -187,12 +234,29 @@
             else
                 $("#idleFuelOver").attr("disabled", "disabled");
         });
+
+        var carDataTypesName = ['Speed', 'Engine Speed', 'Instant Fuel', 'Average Fuel', 'ODO', 'Idle Hours', 'Idle Fuel'];
+        var carDataTypesValue = ['SPD', 'engineSpeed', 'instantFuel', 'averageFuel', 'ODO', 'idleHours', 'idleFuel'];
+
+        $("#carDataTypeSelect2").attr("disabled", "disabled");
+        for (i = 0; i < carDataTypesName.length; i++) {
+            $("#carDataTypeSelect1").append("<option value='" + carDataTypesValue[i] + "'>" + carDataTypesName[i] + "</option>");
+        }
+
+
         //圖表
 
         function Series(type, xdata, seriesData) {
             this.typeName = type;
             this.xdata = xdata;
             this.seriesData = seriesData;
+        }
+
+        function SeriesDoubleYAxis(type, xdata, seriesData, yAxisIndex) {
+            this.typeName = type;
+            this.xdata = xdata;
+            this.seriesData = seriesData;
+            this.yAxisIndex = yAxisIndex;
         }
 
         function Pieces(gt, lte, color){
@@ -222,12 +286,7 @@
                     //    rotate: -52
                     //}
                 },
-                yAxis: {
-                    type: 'value',
-                    max: 90,
-                    min: -10
-                    //boundaryGap: [0, '30%']
-                },
+                yAxis: [],
                 //grid: {
                 //    show: true,
                 //    borderColor: '#19507c',
@@ -263,6 +322,73 @@
                     dimension: 0,
                     pieces: []
                 },
+                series: []
+            }
+            return options;
+        }
+
+        function optionsDoubleYAxis(){
+            var options = {
+                title: {
+                    text: '資料曲線: ',
+                    x: 'center'
+                },
+                legend: {
+                    data: [],
+                    x: 'left'
+                },
+                xAxis: {
+                    type: 'category'
+                },
+                yAxis: [
+                    {
+                        position:'left',
+                        type: 'value',
+                        name: '',
+                        alignTicks: true,
+                        axisLine:{
+                            show: true,
+                            onZero: false
+                        },
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    {
+                        position: 'right',
+                        type: 'value',
+                        name: '',
+                        alignTicks: true,
+                        axisLine:{
+                            show: true,
+                            onZero: false
+                        },
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }
+                ],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        animation: false,
+                        label: {
+                            backgroundColor: '#505765'
+                        }
+                    }
+                },
+                dataZoom: [{
+                    show: true,
+                    realtime: true,
+                    start: 0,
+                    end: 20
+                }, {
+                    type: 'inside',
+                    realtime: true,
+                    start: 0,
+                    end: 20
+                }],
                 series: []
             }
             return options;
@@ -327,6 +453,76 @@
                 });
             var returnList = { 'xd': xd, 'sd': sd, 'ps': ps, 'markAreaDataList': markAreaDataList};
             return returnList;
+        }
+
+        function drawDualYAxisChart(carDataJson, carDataJsonLength, carDataTypeSelected1, carDataTypeSelected2, carDataTimeStart, carDataTimeEnd) {            
+            var carDataTypeSelectedName1 = $("#carDataTypeSelect1 option:selected").text();
+            var carDataTypeSelectedName2 = $("#carDataTypeSelect2 option:selected").text();
+            var options = optionsDoubleYAxis();
+            $("#chartArea").append("<div id=test style = 'width: 100%; height: 500px;' > < /div>");
+            var myEChart = echarts.init(document.getElementById("test"));
+            myEChart.clear();
+
+            options.title.text += carDataTypeSelectedName1 + " 、 " + carDataTypeSelectedName2;
+            var xd = [], sd1 = [], sd2 = [];
+            $.each(carDataJson,
+                function (n, value) {
+                    if (n == carDataJsonLength) {
+                        return false;
+                    }
+                    xd.push(value.DateTime);
+                    sd1.push(value[carDataTypeSelected1]);
+                    sd2.push(value[carDataTypeSelected2]);
+                });
+
+            var s1 = new SeriesDoubleYAxis(carDataTypeSelectedName1, xd, sd1, '0');
+            var s2 = new SeriesDoubleYAxis(carDataTypeSelectedName2, xd, sd2, '1');
+            var x = [];
+            x.push(s1);
+            x.push(s2);
+
+
+            var xStart = carDataTimeStart;
+            var xEnd = carDataTimeEnd;
+            options.xAxis.data = xd;
+            options.xAxis.start = xStart;
+            options.xAxis.end = xEnd;
+
+            $.each(x,
+                function (j, value) {
+                    options.legend.data.push(value.typeName);
+                    options.series.push({
+                        name: value.typeName,
+                        type: 'line',
+                        smooth: true,
+                        yAxisIndex: j,
+                        data: value.seriesData
+                    });
+                    options.yAxis[j].name = value.typeName;
+                });
+
+                        
+            myEChart.setOption(options);
+        }
+
+        function loading(text = "處理中 請稍候..."){
+            $.blockUI({
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: .5,
+                    color: '#fff',
+                    height: '55px'
+                },
+                message: '<p><img src="/lib/image/amalie-steiness.gif" width="30" /> ' + text + '</p>'
+            });
+        }
+
+        function unLoading(){            
+            $.unblockUI();
         }
 
         //選取
@@ -418,26 +614,68 @@
             });
         });
 
+        $("#carDataTypeSelect1").change(function () {
+            var carDataTypeSelected1 = $("#carDataTypeSelect1 option:selected").val();
+            $("#carDataTypeSelect2").removeAttr("disabled");
+            $("#carDataTypeSelect2").empty();
+            $("#carDataTypeSelect2").append("<option value=''>請選擇車輛資料類別</option>");
+            for (i = 0; i < carDataTypesName.length; i++) {
+                if (carDataTypesValue[i] != carDataTypeSelected1)
+                    $("#carDataTypeSelect2").append("<option value='" + carDataTypesValue[i] + "'>" + carDataTypesName[i] + "</option>");
+            }
+        });
+
+        $("#clearCarDataTypeSelect").click(function (e) {
+            $("#carDataTypeSelect2").empty();
+            $("#carDataTypeSelect2").append("<option value=''>請選擇車輛資料類別</option>");
+            $("#carDataTypeSelect2").attr("disabled", "disabled");
+            $("#carDataTypeSelect1").empty();
+            $("#carDataTypeSelect1").append("<option value=''>請選擇車輛資料類別</option>");
+            for (i = 0; i < carDataTypesName.length; i++) {
+                    $("#carDataTypeSelect1").append("<option value='" + carDataTypesValue[i] + "'>" + carDataTypesName[i] + "</option>");
+            }
+        }); 
+
         $("#clearSubmit").click(function (e) {
             //重整網頁
             location.reload(true);
         });        
 
-        $("#requestSubmit").click(function (e) {
+        $("#requestSubmit").click(function (e) {           
             var carSDCardNumSelected = $("#carSDCardNumSelect option:selected").text();
             var carStartupSelected = $("#carStartupSelect").val();
+            var carDataTypeSelected1 = $("#carDataTypeSelect1 option:selected").val();
+            var carDataTypeSelected2 = $("#carDataTypeSelect2 option:selected").val();
             var carDataTypeSelected = [];
+            var carDataTypeSelectedName = [];
+            var carDataTypeAllSelected = [];
             $("[name=carDataType]:checkbox:checked").each(function () {
                 carDataTypeSelected.push($(this).val());
             });
-            console.log(carDataTypeSelected);
+            if (carDataTypeSelected1 != '' && carDataTypeSelected2 != '')
+                carDataTypeAllSelected.push(carDataTypeSelected1, carDataTypeSelected2);
+            $.each(carDataTypeSelected,
+                function (n, value) {
+                    if (value != carDataTypeSelected1 && value != carDataTypeSelected2)
+                        carDataTypeAllSelected.push(value);
+                    $.each(carDataTypesValue,
+                        function (m, carDataType) {
+                            if (value == carDataType)
+                            carDataTypeSelectedName.push(carDataTypesName[m]);
+                        });                    
+                });
+
+            console.log(carDataTypeAllSelected);
 
             if (carStartupSelected == '') {
                 //阻止送出
                 //e.preventDefault();
-                alert("請選取全部資料後再送出！！");
+                alert("請確認是否已填選完整資料！！");
+            } else if (carDataTypeSelected1 != '' && carDataTypeSelected2 == '') {
+                alert("請確認兩項車輛資料類別是否填選完整！！");
             } else {
                 //myEChart.setOption(options);
+                loading();
 
                 $.post("../Home/getCarStartupAllTime", { 'carStartupSelected': carStartupSelected }, function (carDataJson) {
                     carDataJson = JSON.parse(carDataJson);
@@ -463,11 +701,13 @@
 
                     $("#CO2Compute").show();
                     $("#CO2ComputeResultDiv").hide();
+
+                    unLoading();
                 });
 
-                if(carDataTypeSelected.length != 0){
-                    $.post("../Home/getCarDataJson", { 'carStartupSelected': carStartupSelected, 'carDataTypeSelected': carDataTypeSelected }, function (carDataJson) {
-
+                if((carDataTypeSelected.length != 0) || (carDataTypeSelected1 != '' && carDataTypeSelected2 != '')){
+                    loading();
+                    $.post("../Home/getCarDataJson", { 'carStartupSelected': carStartupSelected, 'carDataTypeAllSelected': carDataTypeAllSelected }, function (carDataJson) {
                         carDataJson = JSON.parse(carDataJson);
                         console.log(carDataJson.length);
                         var carDataJsonLength = carDataJson.length - 2;
@@ -478,102 +718,114 @@
                         var options;
                         $("#chartArea").empty();
 
-                        for (var i = 0; i < carDataTypeSelected.length; i++) {
-                            options = optionsDefinition();
-                            $("#chartArea").append("<div id=" + carDataTypeSelected[i] + " style = 'width: 100%; height: 500px;' > < /div>");
-                            var myEChart = echarts.init(document.getElementById(carDataTypeSelected[i]), 'shine');
-                            myEChart.clear();
-                            var xd = [], sd = [], ps = [];
-                            var maxData, minData;
-                            var setDataOfChartList;
-                            if (carDataTypeSelected[i] == "SPD") {
-                                options.title.text += "Speed";
-                                maxData = carDataJson[carDataJsonMax].SPD;
-                                minData = carDataJson[carDataJsonMin].SPD;
-                                setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#SPDOver").val());
-                            }
-                            else if (carDataTypeSelected[i] == "engineSpeed") {
-                                options.title.text += "Engine Speed";
-                                maxData = carDataJson[carDataJsonMax].engineSpeed;
-                                minData = carDataJson[carDataJsonMin].engineSpeed;
-                                setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#engineSpeedOver").val());
-                            }
-                            else if (carDataTypeSelected[i] == "instantFuel") {
-                                options.title.text += "Instant Fuel";
-                                maxData = carDataJson[carDataJsonMax].instantFuel;
-                                minData = carDataJson[carDataJsonMin].instantFuel;
-                                setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#instantFuelOver").val());
-                            }
-                            else if (carDataTypeSelected[i] == "averageFuel") {
-                                options.title.text += "Average Fuel";
-                                maxData = carDataJson[carDataJsonMax].averageFuel;
-                                minData = carDataJson[carDataJsonMin].averageFuel;
-                                setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#averageFuelOver").val());
-                            }
-                            else if (carDataTypeSelected[i] == "ODO") {
-                                options.title.text += "Odometer";
-                                maxData = carDataJson[carDataJsonMax].ODO;
-                                minData = carDataJson[carDataJsonMin].ODO;
-                                setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#ODOOver").val());
-                            }
-                            else if (carDataTypeSelected[i] == "idleHours") {
-                                options.title.text += "Idle Hours";
-                                maxData = carDataJson[carDataJsonMax].idleHours;
-                                minData = carDataJson[carDataJsonMin].idleHours;
-                                setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#idleHoursOver").val());
-                            }
-                            else if (carDataTypeSelected[i] == "idleFuel") {
-                                options.title.text += "Idle Fuel";
-                                maxData = carDataJson[carDataJsonMax].idleFuel;
-                                minData = carDataJson[carDataJsonMin].idleFuel;
-                                setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#idleFuelOver").val());
-                            }
-                            xd = setDataOfChartList['xd'];
-                            sd = setDataOfChartList['sd'];
-                            options.yAxis.max = maxData;
-                            options.yAxis.min = minData;
-                            var s = new Series(carDataTypeSelected[i], xd, sd);
-                            var xStart = carDataTimeStart;
-                            var xEnd = carDataTimeEnd;
-                            options.xAxis.data = s.xdata;
-                            options.xAxis.start = xStart;
-                            options.xAxis.end = xEnd;
-
-                            ps = setDataOfChartList['ps'];
-                            $.each(ps,
-                                function (n, value) {
-                                    options.visualMap.pieces.push(value);
-                            });
-
-                            markAreaDataList = setDataOfChartList['markAreaDataList'];
-                            var markAreaData = [];
-                            $.each(markAreaDataList,
-                                function (n, value) {
-                                    markAreaData.push([{xAxis: xd[value[0]]},{xAxis: xd[value[1]]}]);
-                                });
-
-                            options.legend.data.push(options.title.text);
-                            options.series.push({
-                                name: options.title.text,
-                                type: 'line',
-                                smooth: true,
-                                data: s.seriesData,
-                                markArea: {
-                                    itemStyle: {
-                                        color: 'rgba(255, 173, 177, 0.4)'
-                                    },
-                                    data: []
-                                }
-                            });
-                            $.each(markAreaData,
-                                function (n, value) {
-                                    options.series[0].markArea.data.push(value);
-                                });
-                            
-                            myEChart.setOption(options);
+                        if (carDataTypeSelected1 != '' && carDataTypeSelected2 != ''){
+                            drawDualYAxisChart(carDataJson, carDataJsonLength, carDataTypeSelected1, carDataTypeSelected2, carDataTimeStart, carDataTimeEnd);
                         }
+                        
+                        if (carDataTypeSelected.length != 0){
+                            for (var i = 0; i < carDataTypeSelected.length; i++) {
+                                options = optionsDefinition();
+                                $("#chartArea").append("<div id=" + carDataTypeSelected[i] + " style = 'width: 100%; height: 500px;' > < /div>");
+                                var myEChart = echarts.init(document.getElementById(carDataTypeSelected[i]), 'shine');
+                                myEChart.clear();
+                                var xd = [], sd = [], ps = [];
+                                var maxData, minData;
+                                var setDataOfChartList;
+                                if (carDataTypeSelected[i] == "SPD") {
+                                    options.title.text += "Speed";
+                                    maxData = carDataJson[carDataJsonMax].SPD;
+                                    minData = carDataJson[carDataJsonMin].SPD;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#SPDOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "engineSpeed") {
+                                    options.title.text += "Engine Speed";
+                                    maxData = carDataJson[carDataJsonMax].engineSpeed;
+                                    minData = carDataJson[carDataJsonMin].engineSpeed;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#engineSpeedOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "instantFuel") {
+                                    options.title.text += "Instant Fuel";
+                                    maxData = carDataJson[carDataJsonMax].instantFuel;
+                                    minData = carDataJson[carDataJsonMin].instantFuel;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#instantFuelOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "averageFuel") {
+                                    options.title.text += "Average Fuel";
+                                    maxData = carDataJson[carDataJsonMax].averageFuel;
+                                    minData = carDataJson[carDataJsonMin].averageFuel;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#averageFuelOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "ODO") {
+                                    options.title.text += "Odometer";
+                                    maxData = carDataJson[carDataJsonMax].ODO;
+                                    minData = carDataJson[carDataJsonMin].ODO;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#ODOOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "idleHours") {
+                                    options.title.text += "Idle Hours";
+                                    maxData = carDataJson[carDataJsonMax].idleHours;
+                                    minData = carDataJson[carDataJsonMin].idleHours;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#idleHoursOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "idleFuel") {
+                                    options.title.text += "Idle Fuel";
+                                    maxData = carDataJson[carDataJsonMax].idleFuel;
+                                    minData = carDataJson[carDataJsonMin].idleFuel;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#idleFuelOver").val());
+                                }
+                                xd = setDataOfChartList['xd'];
+                                sd = setDataOfChartList['sd'];
+                                options.yAxis.push({
+                                    type: 'value',
+                                    max: maxData,
+                                    min: minData
+                                });
+                                //options.yAxis.max = maxData;
+                                //options.yAxis.min = minData;
+                                var s = new Series(carDataTypeSelectedName[i], xd, sd);
+                                var xStart = carDataTimeStart;
+                                var xEnd = carDataTimeEnd;
+                                options.xAxis.data = s.xdata;
+                                options.xAxis.start = xStart;
+                                options.xAxis.end = xEnd;
+
+                                ps = setDataOfChartList['ps'];
+                                $.each(ps,
+                                    function (n, value) {
+                                        options.visualMap.pieces.push(value);
+                                    });
+
+                                markAreaDataList = setDataOfChartList['markAreaDataList'];
+                                var markAreaData = [];
+                                $.each(markAreaDataList,
+                                    function (n, value) {
+                                        markAreaData.push([{ xAxis: xd[value[0]] }, { xAxis: xd[value[1]] }]);
+                                    });
+
+                                options.legend.data.push(options.title.text);
+                                options.series.push({
+                                    name: s.typeName,
+                                    type: 'line',
+                                    smooth: true,
+                                    data: s.seriesData,
+                                    markArea: {
+                                        itemStyle: {
+                                            color: 'rgba(255, 173, 177, 0.4)'
+                                        },
+                                        data: []
+                                    }
+                                });
+                                $.each(markAreaData,
+                                    function (n, value) {
+                                        options.series[0].markArea.data.push(value);
+                                    });
+
+                                myEChart.setOption(options);
+                            }
+                        }                        
+                        unLoading();
                     });
-                }                
+                }
             }
         });
 
@@ -581,6 +833,7 @@
             var carStartupSelected = $("#carStartupSelect").val();
             var startTimeKey = $("#slider-range").slider("values", 0);
             var endTimeKey = $("#slider-range").slider("values", 1);
+            loading("計算CO2中 請稍候...");
             $.post("../Home/getCarStartupAllTime", { 'carStartupSelected': carStartupSelected }, function (carDataJson) {
                 carDataJson = JSON.parse(carDataJson);
                 var startPrimaryValue = carDataJson[startTimeKey].primaryValue;
@@ -597,6 +850,7 @@
                     $("#mileageOfCO2").text("啟動區間內行駛總里程為： " + mileage + " km");
                     $("#computeResultOfCO2").text("CO2: " + co2 + "kg");
                 });
+                unLoading();
             });
         });
     });

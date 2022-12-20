@@ -79,10 +79,10 @@ namespace car_test.Controllers
             }
         }
 
-        public IActionResult getCarDataJson(string carStartupSelected, string[] carDataTypeSelected)
+        public IActionResult getCarDataJson(string carStartupSelected, string[] carDataTypeAllSelected)
         {
             databaseProcess db = new databaseProcess(); 
-            List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeSelected);
+            List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeAllSelected);
 
             string result = "";
             if (carDataList == null)
@@ -94,7 +94,7 @@ namespace car_test.Controllers
             {
                 //carDataList = dataProcessing.getDataByNoRepeating(carDataList);
                 carDataList = dataProcessing.getDataByAveragePerSecond(carDataList);
-                carDataList = dataProcessing.getValueOfMaxAndMin(carDataList, carDataTypeSelected);
+                carDataList = dataProcessing.getValueOfMaxAndMin(carDataList, carDataTypeAllSelected);
 
                 result = JsonConvert.SerializeObject(carDataList);
 
@@ -108,9 +108,9 @@ namespace car_test.Controllers
         public IActionResult getCarStartupAllTime(string carStartupSelected)
         {
             databaseProcess db = new databaseProcess();
-            string[] carDataTypeSelected = new string[] { "primaryValue"};
+            string[] carDataTypeAllSelected = new string[] { "primaryValue"};
             //DateTime start = DateTime.Now;
-            List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeSelected);
+            List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeAllSelected);
             //DateTime end = DateTime.Now;
             //DateTime start1 = DateTime.Now;
             List<carData> carDataBySecList = dataProcessing.getCarDataBySec(carDataList);
@@ -134,8 +134,8 @@ namespace car_test.Controllers
         public IActionResult getCO2ByCarStartup(string carStartupSelected, int startPrimaryValue, int endPrimaryValue)
         {
             databaseProcess db = new databaseProcess();
-            string[] carDataTypeSelected = new string[] {"instantFuel", "ODO"};
-            List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeSelected, startPrimaryValue, endPrimaryValue);
+            string[] carDataTypeAllSelected = new string[] {"instantFuel", "ODO"};
+            List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeAllSelected, startPrimaryValue, endPrimaryValue);
             List<carData> carDataBySecList = dataProcessing.getCarDataBySec(carDataList, dataParameterRequire: "CO2");
             carCalculatedData carCalculatedData = dataProcessing.computeCO2ByCarStartup(carDataBySecList);
 

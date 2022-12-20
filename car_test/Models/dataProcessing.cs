@@ -103,13 +103,13 @@ namespace car_test.Functions
 
             return carDataBySecList;
         }
-        public static List<carData> getValueOfMaxAndMin(List<carData> carDataList, string[] carDataTypeSelected)
+        public static List<carData> getValueOfMaxAndMin(List<carData> carDataList, string[] carDataTypeAllSelected)
         {
             carData carDataListMax = new carData();
             carData carDataListMin = new carData();
             List<float> dataList = new List<float>();
 
-            foreach (string carDataType in carDataTypeSelected)
+            foreach (string carDataType in carDataTypeAllSelected)
             {
                 if (carDataType == "SPD")
                 {
