@@ -20,14 +20,14 @@
     <link href="~/lib/jquery-ui-1.13.2.custom/jquery-ui.css" rel="stylesheet" />
     <script src="~/lib/jquery-ui-1.13.2.custom/jquery-ui.min.js"></script>
     <script src="~/lib/jquery-ui-1.13.2.custom/jquery-ui.js"></script>
-<script src="~/js/jquery/jquery.blockUI.js"></script>
+    <script src="~/js/jquery/jquery.blockUI.js"></script>
 
 
 </head>
 
 <div class="text-center">
     <h1 class="display-4">車輛ESG查詢系統</h1>
-    <p>local version</p>
+    @*<p>local version</p>*@
 </div>
 
 @*<form style="margin-left:10px;">*@
@@ -59,7 +59,7 @@
 </div>
 
 <div class="selectArea">
-    <label>可選擇任意兩項類別以繪製同一張圖表進行分析：</label><br />
+    <label>Correlation 分析(請任意選擇兩項資料以繪製在同一張圖表)： </label><br />
     <select id="carDataTypeSelect1" name="carDataTypeSelect">
         <option value="">請選擇車輛資料類別</option>
     </select>、
@@ -74,7 +74,7 @@
 <div class="selectArea">
     <table>
         <tr>
-            請選擇車輛資料類別和填入凸顯範圍 (複選) :
+            Over/Under Threshold 分析(請選擇車輛資料) :
         </tr>
         <tr>
             <td>
