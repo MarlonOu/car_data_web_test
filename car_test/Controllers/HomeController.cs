@@ -20,36 +20,11 @@ namespace car_test.Controllers
 
         public IActionResult Index()
         {
-            if (HttpContext.Session.GetString("TOKEN") == null)
-            {
-                //return View("Login");
-                return Login(null);
-            }
             databaseProcess db = new databaseProcess();
             List<carRegistrationInformation> carSdCardNumList = db.getSdCardNum();
 
             ViewBag.carSdCardNumList = carSdCardNumList;
-
-            return View("Index");
-        }
-
-        /*Hommy:Login*/
-        [HttpPost]
-        public IActionResult Login(IFormCollection? post)
-        {
-            if (post == null) return View("Login");
-            databaseProcess db = new databaseProcess();
-
-            string id = post["id"];
-            string password = post["password"];
-            userData data = new userData(id, password);
-            if (!data.checkUser())
-            {
-                return View();
-            }
-            HttpContext.Session.SetString("ID", id);
-            HttpContext.Session.SetString("TOKEN", data.Token);
-            return Index();
+            return View();
         }
 
         public IActionResult getCarDriverList(string carSDCardNumSelected)
