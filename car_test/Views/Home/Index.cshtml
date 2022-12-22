@@ -154,7 +154,7 @@
     </div>
     <div id="CO2ComputeResultDiv" style="padding-top: 1%;">
         <div>
-            <p>CO2計算結果：</p> 
+            CO2計算結果： 
         </div>
         <div id="timeOfCO2" style="border:0; color:#f6931f; font-weight:bold; width:calc(100% - 80px);"></div>
         <div id="mileageOfCO2" style="border:0; color:#f6931f; font-weight:bold; width:calc(100% - 80px);"></div>
@@ -188,19 +188,62 @@
 
 <script>
     $(document).ready(function () {
-        
-        //init
-        var carDataTypeCheckboxSelect = ['#o1', '#o2', '#o3', '#o4', '#o5', '#o6', '#o7'];
-        var carDataTypeCheckboxSelectOver = ['#SPDOver', '#engineSpeedOver', '#instantFuelOver', '#averageFuelOver', '#ODOOver', '#idleHoursOver', '#idleFuelOver'];
+        $("#CO2Compute").hide();
+        $("#CO2ComputeResultDiv").hide();
+
+        $("#o1").click(function () {
+            if($("#SPDOver").attr("disabled"))
+                $("#SPDOver").removeAttr("disabled");
+            else
+                $("#SPDOver").attr("disabled", "disabled");
+        });
+        $("#o2").click(function () {
+            if($("#engineSpeedOver").attr("disabled"))
+                $("#engineSpeedOver").removeAttr("disabled");
+            else
+                $("#engineSpeedOver").attr("disabled", "disabled");
+        });
+        $("#o3").click(function () {
+            if($("#instantFuelOver").attr("disabled"))
+                $("#instantFuelOver").removeAttr("disabled");
+            else
+                $("#instantFuelOver").attr("disabled", "disabled");
+        });
+        $("#o4").click(function () {
+            if($("#averageFuelOver").attr("disabled"))
+                $("#averageFuelOver").removeAttr("disabled");
+            else
+                $("#averageFuelOver").attr("disabled", "disabled");
+        });
+        $("#o5").click(function () {
+            if($("#ODOOver").attr("disabled"))
+                $("#ODOOver").removeAttr("disabled");
+            else
+                $("#ODOOver").attr("disabled", "disabled");
+        });
+        $("#o6").click(function () {
+            if($("#idleHoursOver").attr("disabled"))
+                $("#idleHoursOver").removeAttr("disabled");
+            else
+                $("#idleHoursOver").attr("disabled", "disabled");
+        });
+        $("#o7").click(function () {
+            if ($("#idleFuelOver").attr("disabled"))
+                $("#idleFuelOver").removeAttr("disabled");
+            else
+                $("#idleFuelOver").attr("disabled", "disabled");
+        });
+
         var carDataTypesName = ['Speed', 'Engine Speed', 'Instant Fuel', 'Average Fuel', 'ODO', 'Idle Hours', 'Idle Fuel'];
         var carDataTypesValue = ['SPD', 'engineSpeed', 'instantFuel', 'averageFuel', 'ODO', 'idleHours', 'idleFuel'];
 
-        $("#CO2Compute").hide();
-        $("#CO2ComputeResultDiv").hide();
         $("#carDataTypeSelect2").attr("disabled", "disabled");
         for (i = 0; i < carDataTypesName.length; i++) {
             $("#carDataTypeSelect1").append("<option value='" + carDataTypesValue[i] + "'>" + carDataTypesName[i] + "</option>");
         }
+
+
+        //圖表
 
         function Series(type, xdata, seriesData) {
             this.typeName = type;
@@ -208,10 +251,21 @@
             this.seriesData = seriesData;
         }
 
+        function SeriesDoubleYAxis(type, xdata, seriesData, yAxisIndex) {
+            this.typeName = type;
+            this.xdata = xdata;
+            this.seriesData = seriesData;
+            this.yAxisIndex = yAxisIndex;
+        }
+
         function Pieces(gt, lte, color){
             this.gt = gt-1;
             this.lte = lte-1;
             this.color = color;
+        }
+
+        function markArea(xAxis) {
+            this.xAxis = xAxis;
         }
 
         function optionsDefinition(){
@@ -260,13 +314,80 @@
                     start: 0,
                     end: 20
                 }],
-                //visualMap: {
-                //    type: 'piecewise',
-                //    seriesIndex: 0,
-                //    show: false,
-                //    dimension: 0,
-                //    pieces: []
-                //},
+                visualMap: {
+                    type: 'piecewise',
+                    seriesIndex: 0,
+                    show: false,
+                    dimension: 0,
+                    pieces: []
+                },
+                series: []
+            }
+            return options;
+        }
+
+        function optionsDoubleYAxis(){
+            var options = {
+                title: {
+                    text: '資料曲線: ',
+                    x: 'center'
+                },
+                legend: {
+                    data: [],
+                    x: 'left'
+                },
+                xAxis: {
+                    type: 'category'
+                },
+                yAxis: [
+                    {
+                        position:'left',
+                        type: 'value',
+                        name: '',
+                        alignTicks: true,
+                        axisLine:{
+                            show: true,
+                            onZero: false
+                        },
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    {
+                        position: 'right',
+                        type: 'value',
+                        name: '',
+                        alignTicks: true,
+                        axisLine:{
+                            show: true,
+                            onZero: false
+                        },
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }
+                ],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        animation: false,
+                        label: {
+                            backgroundColor: '#505765'
+                        }
+                    }
+                },
+                dataZoom: [{
+                    show: true,
+                    realtime: true,
+                    start: 0,
+                    end: 20
+                }, {
+                    type: 'inside',
+                    realtime: true,
+                    start: 0,
+                    end: 20
+                }],
                 series: []
             }
             return options;
@@ -333,89 +454,10 @@
             return returnList;
         }
 
-        function drawAChart(carDataJson, carDataJsonLength, carDataTypeSelected, carDataTimeStart, carDataTimeEnd, carDataJsonMax, carDataJsonMin, carDataTypeSelectedName){
-            var options;
-            for (var i = 0; i < carDataTypeSelected.length; i++) {
-                options = optionsDefinition();
-                $("#chartArea").append("<div id=" + carDataTypeSelected[i] + " style = 'width: 100%; height: 500px;' > < /div>");
-                var myEChart = echarts.init(document.getElementById(carDataTypeSelected[i]), 'shine');
-                myEChart.clear();
-                var xd = [], sd = [], ps = [];
-                var maxData, minData;
-                var setDataOfChartList;
-
-                //carDataTypesValue = "SPD"
-                //carDataTypesName = "Speed"
-                //carDataTypeCheckboxSelectOver = "#SPDOver"
-                $.each(carDataTypesValue,
-                    function (n, value) {
-                        if (value == carDataTypeSelected[i]) {
-                            options.title.text += carDataTypesName[n];
-                            maxData = carDataJson[carDataJsonMax][value];
-                            minData = carDataJson[carDataJsonMin][value];
-                            setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $(carDataTypeCheckboxSelectOver[n]).val());
-                        }
-                    });
-
-                xd = setDataOfChartList['xd'];
-                sd = setDataOfChartList['sd'];
-                options.yAxis.push({
-                    type: 'value',
-                    max: maxData,
-                    min: minData
-                });
-                var s = new Series(carDataTypeSelectedName[i], xd, sd);
-                var xStart = carDataTimeStart;
-                var xEnd = carDataTimeEnd;
-                options.xAxis.data = s.xdata;
-                options.xAxis.start = xStart;
-                options.xAxis.end = xEnd;
-
-                ps = setDataOfChartList['ps'];
-                options["visualMap"] = {
-                    type: 'piecewise',
-                    seriesIndex: 0,
-                    show: false,
-                    dimension: 0,
-                    pieces: []
-                };
-                $.each(ps,
-                    function (n, value) {
-                        options.visualMap.pieces.push(value);
-                    });
-
-                markAreaDataList = setDataOfChartList['markAreaDataList'];
-                var markAreaData = [];
-                $.each(markAreaDataList,
-                    function (n, value) {
-                        markAreaData.push([{ xAxis: xd[value[0]] }, { xAxis: xd[value[1]] }]);
-                    });
-
-                options.legend.data.push(options.title.text);
-                options.series.push({
-                    name: s.typeName,
-                    type: 'line',
-                    smooth: true,
-                    data: s.seriesData,
-                    markArea: {
-                        itemStyle: {
-                            color: 'rgba(255, 173, 177, 0.4)'
-                        },
-                        data: []
-                    }
-                });
-                $.each(markAreaData,
-                    function (n, value) {
-                        options.series[0].markArea.data.push(value);
-                    });
-                myEChart.setOption(options);
-            }
-        }
-
         function drawDualYAxisChart(carDataJson, carDataJsonLength, carDataTypeSelected1, carDataTypeSelected2, carDataTimeStart, carDataTimeEnd) {            
             var carDataTypeSelectedName1 = $("#carDataTypeSelect1 option:selected").text();
             var carDataTypeSelectedName2 = $("#carDataTypeSelect2 option:selected").text();
-            var options = optionsDefinition();
+            var options = optionsDoubleYAxis();
             $("#chartArea").append("<div id=test style = 'width: 100%; height: 500px;' > < /div>");
             var myEChart = echarts.init(document.getElementById("test"));
             myEChart.clear();
@@ -432,34 +474,22 @@
                     sd2.push(value[carDataTypeSelected2]);
                 });
 
-            var s1 = new Series(carDataTypeSelectedName1, xd, sd1);
-            var s2 = new Series(carDataTypeSelectedName2, xd, sd2);
-            var chartsList = [];
-            chartsList.push(s1);
-            chartsList.push(s2);
+            var s1 = new SeriesDoubleYAxis(carDataTypeSelectedName1, xd, sd1, '0');
+            var s2 = new SeriesDoubleYAxis(carDataTypeSelectedName2, xd, sd2, '1');
+            var x = [];
+            x.push(s1);
+            x.push(s2);
+
 
             var xStart = carDataTimeStart;
             var xEnd = carDataTimeEnd;
             options.xAxis.data = xd;
             options.xAxis.start = xStart;
-            options.xAxis.end = xEnd;            
+            options.xAxis.end = xEnd;
 
-            $.each(chartsList,
+            $.each(x,
                 function (j, value) {
                     options.legend.data.push(value.typeName);
-                    options.yAxis.push({
-                        position: j,
-                        type: 'value',
-                        name: value.typeName,
-                        alignTicks: true,
-                        axisLine: {
-                            show: true,
-                            onZero: false
-                        },
-                        axisLabel: {
-                            formatter: '{value}'
-                        }
-                    });
                     options.series.push({
                         name: value.typeName,
                         type: 'line',
@@ -467,7 +497,10 @@
                         yAxisIndex: j,
                         data: value.seriesData
                     });
-                }); 
+                    options.yAxis[j].name = value.typeName;
+                });
+
+                        
             myEChart.setOption(options);
         }
 
@@ -491,9 +524,10 @@
             $.unblockUI();
         }
 
-        //車輛駕駛人
+        //選取
         $("#carSDCardNumSelect").change(function () {
             var carSDCardNumSelected = $("#carSDCardNumSelect option:selected").text();
+            //console.log(carSDCardNumSelected);
             $.post("../Home/getCarDriverList", { 'carSDCardNumSelected': carSDCardNumSelected }, function (carDriverList) {
                 if (carDriverList == "") {
                     $("#carDriverSelect").empty();
@@ -503,6 +537,7 @@
                     carDriverList = JSON.parse(carDriverList);
                     $("#carDriverSelect").empty();
                     $("#carDriverSelect").append("<option value=''>請選擇</option>");
+                    //$("#zxc").append(data);
                     for (i = 0; i < carDriverList.length; i++) {
                         $("#carDriverSelect").append("<option value='" + (i + 1) + "'>" + carDriverList[i].carDriver + "</option>");
                     }
@@ -510,10 +545,10 @@
             });
         });
 
-        //車輛啟動日期
         $("#carDriverSelect").change(function () {
             var carSDCardNumSelected = $("#carSDCardNumSelect option:selected").text();
             var carDriverSelectd = $("#carDriverSelect option:selected").text();
+            //console.log(carSDCardNumSelected);
             $.post("../Home/carStartDateTime", { 'carSDCardNumSelected': carSDCardNumSelected, 'carDriverSelectd': carDriverSelectd }, function (carStartDateTimeList) {
                 if (carStartDateTimeList == "") {
                     $("#carStartDateSelect").empty();
@@ -523,6 +558,7 @@
                     carStartDateTimeList = JSON.parse(carStartDateTimeList);
                     $("#carStartDateSelect").empty();
                     $("#carStartDateSelect").append("<option value=''>請選擇</option>");
+                    //$("#zxc").append(data);
                     var carStartDateList = new Array();
                     for (i = 0; i < carStartDateTimeList.length; i++) {
                         var carStartDateTimeSplitList = carStartDateTimeList[i].carStartTime.split(' ');
@@ -547,11 +583,11 @@
             });
         });
 
-        //車輛啟動區間
         $("#carStartDateSelect").change(function () {
             var carSDCardNumSelected = $("#carSDCardNumSelect option:selected").text();
             var carDriverSelectd = $("#carDriverSelect option:selected").text();
             var carStartDateSelected = $("#carStartDateSelect option:selected").text();
+            //console.log(carStartDateSelected);
             $.post("../Home/carStartupTime", { 'carSDCardNumSelected': carSDCardNumSelected, 'carDriverSelectd': carDriverSelectd }, function (carStartDateTimeList) {
                 if (carStartDateTimeList == "") {
                     $("#carStartupSelect").empty();
@@ -559,6 +595,7 @@
                 }
                 else {
                     carStartDateTimeList = JSON.parse(carStartDateTimeList);
+                    //console.log(carStartDateTimeList);
                     $("#carStartupSelect").empty();
                     $("#carStartupSelect").append("<option value=''>請選擇</option>");
                     for (i = 0; i < carStartDateTimeList.length; i++) {
@@ -576,7 +613,6 @@
             });
         });
 
-        //可選擇任意兩項類別以繪製同一張圖表進行分析：
         $("#carDataTypeSelect1").change(function () {
             var carDataTypeSelected1 = $("#carDataTypeSelect1 option:selected").val();
             $("#carDataTypeSelect2").removeAttr("disabled");
@@ -598,66 +634,6 @@
                     $("#carDataTypeSelect1").append("<option value='" + carDataTypesValue[i] + "'>" + carDataTypesName[i] + "</option>");
             }
         }); 
-
-        //請選擇車輛資料類別和填入凸顯範圍 (複選) :
-        $("#o1").click(function () {
-            if ($("#SPDOver").attr("disabled"))
-                $("#SPDOver").removeAttr("disabled");
-            else
-                $("#SPDOver").attr("disabled", "disabled");
-        });
-        $("#o2").click(function () {
-            if ($("#engineSpeedOver").attr("disabled"))
-                $("#engineSpeedOver").removeAttr("disabled");
-            else
-                $("#engineSpeedOver").attr("disabled", "disabled");
-        });
-        $("#o3").click(function () {
-            if ($("#instantFuelOver").attr("disabled"))
-                $("#instantFuelOver").removeAttr("disabled");
-            else
-                $("#instantFuelOver").attr("disabled", "disabled");
-        });
-        $("#o4").click(function () {
-            if ($("#averageFuelOver").attr("disabled"))
-                $("#averageFuelOver").removeAttr("disabled");
-            else
-                $("#averageFuelOver").attr("disabled", "disabled");
-        });
-        $("#o5").click(function () {
-            if ($("#ODOOver").attr("disabled"))
-                $("#ODOOver").removeAttr("disabled");
-            else
-                $("#ODOOver").attr("disabled", "disabled");
-        });
-        $("#o6").click(function () {
-            if ($("#idleHoursOver").attr("disabled"))
-                $("#idleHoursOver").removeAttr("disabled");
-            else
-                $("#idleHoursOver").attr("disabled", "disabled");
-        });
-        $("#o7").click(function () {
-            if ($("#idleFuelOver").attr("disabled"))
-                $("#idleFuelOver").removeAttr("disabled");
-            else
-                $("#idleFuelOver").attr("disabled", "disabled");
-        });
-        $("#checkboxAllSelect").click(function () {
-            $.each(carDataTypeCheckboxSelectOver,
-                function (n, value) {
-                    if ($(value).attr('disabled')) {
-                        $(carDataTypeCheckboxSelect[n]).click();
-                    }
-                });
-        });
-        $("#checkboxAllCancel").click(function () {
-            $.each(carDataTypeCheckboxSelectOver,
-                function (n, value) {
-                    if (!$(value).attr('disabled')) {
-                        $(carDataTypeCheckboxSelect[n]).click();
-                    }
-                });
-        });
 
         $("#clearSubmit").click(function (e) {
             //重整網頁
@@ -688,6 +664,8 @@
                         });                    
                 });
 
+            console.log(carDataTypeAllSelected);
+
             if (carStartupSelected == '') {
                 //阻止送出
                 //e.preventDefault();
@@ -695,7 +673,9 @@
             } else if (carDataTypeSelected1 != '' && carDataTypeSelected2 == '') {
                 alert("請確認兩項車輛資料類別是否填選完整！！");
             } else {
+                //myEChart.setOption(options);
                 loading();
+
                 $.post("../Home/getCarStartupAllTime", { 'carStartupSelected': carStartupSelected }, function (carDataJson) {
                     carDataJson = JSON.parse(carDataJson);
                     var carDataJsonLength = carDataJson.length;
@@ -705,6 +685,7 @@
                         function (n, value) {
                             timeList.push(value.DateTime);
                         });
+
                     $("#slider-range").slider({
                         range: true,
                         min: 0,
@@ -716,8 +697,10 @@
                     });
                     $("#amount").text(timeList[$("#slider-range").slider("values", 0)] +
                         " ~ " + timeList[$("#slider-range").slider("values", 1)]);
+
                     $("#CO2Compute").show();
                     $("#CO2ComputeResultDiv").hide();
+
                     unLoading();
                 });
 
@@ -725,17 +708,119 @@
                     loading();
                     $.post("../Home/getCarDataJson", { 'carStartupSelected': carStartupSelected, 'carDataTypeAllSelected': carDataTypeAllSelected }, function (carDataJson) {
                         carDataJson = JSON.parse(carDataJson);
+                        console.log(carDataJson.length);
+                        var carDataJsonLength = carDataJson.length - 2;
                         var carDataJsonMax = carDataJson.length - 1;
                         var carDataJsonMin = carDataJson.length - 2;
-                        var carDataJsonLength = carDataJson.length - 2;
                         var carDataTimeStart = carDataJson[0].DateTime;
-                        var carDataTimeEnd = carDataJson[carDataJsonLength - 1].DateTime;
+                        var carDataTimeEnd = carDataJson[carDataJsonLength - 3].DateTime;
+                        var options;
                         $("#chartArea").empty();
+
                         if (carDataTypeSelected1 != '' && carDataTypeSelected2 != ''){
                             drawDualYAxisChart(carDataJson, carDataJsonLength, carDataTypeSelected1, carDataTypeSelected2, carDataTimeStart, carDataTimeEnd);
-                        }                        
+                        }
+                        
                         if (carDataTypeSelected.length != 0){
-                            drawAChart(carDataJson, carDataJsonLength, carDataTypeSelected, carDataTimeStart, carDataTimeEnd, carDataJsonMax, carDataJsonMin, carDataTypeSelectedName);
+                            for (var i = 0; i < carDataTypeSelected.length; i++) {
+                                options = optionsDefinition();
+                                $("#chartArea").append("<div id=" + carDataTypeSelected[i] + " style = 'width: 100%; height: 500px;' > < /div>");
+                                var myEChart = echarts.init(document.getElementById(carDataTypeSelected[i]), 'shine');
+                                myEChart.clear();
+                                var xd = [], sd = [], ps = [];
+                                var maxData, minData;
+                                var setDataOfChartList;
+                                if (carDataTypeSelected[i] == "SPD") {
+                                    options.title.text += "Speed";
+                                    maxData = carDataJson[carDataJsonMax].SPD;
+                                    minData = carDataJson[carDataJsonMin].SPD;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#SPDOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "engineSpeed") {
+                                    options.title.text += "Engine Speed";
+                                    maxData = carDataJson[carDataJsonMax].engineSpeed;
+                                    minData = carDataJson[carDataJsonMin].engineSpeed;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#engineSpeedOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "instantFuel") {
+                                    options.title.text += "Instant Fuel";
+                                    maxData = carDataJson[carDataJsonMax].instantFuel;
+                                    minData = carDataJson[carDataJsonMin].instantFuel;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#instantFuelOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "averageFuel") {
+                                    options.title.text += "Average Fuel";
+                                    maxData = carDataJson[carDataJsonMax].averageFuel;
+                                    minData = carDataJson[carDataJsonMin].averageFuel;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#averageFuelOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "ODO") {
+                                    options.title.text += "Odometer";
+                                    maxData = carDataJson[carDataJsonMax].ODO;
+                                    minData = carDataJson[carDataJsonMin].ODO;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#ODOOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "idleHours") {
+                                    options.title.text += "Idle Hours";
+                                    maxData = carDataJson[carDataJsonMax].idleHours;
+                                    minData = carDataJson[carDataJsonMin].idleHours;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#idleHoursOver").val());
+                                }
+                                else if (carDataTypeSelected[i] == "idleFuel") {
+                                    options.title.text += "Idle Fuel";
+                                    maxData = carDataJson[carDataJsonMax].idleFuel;
+                                    minData = carDataJson[carDataJsonMin].idleFuel;
+                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#idleFuelOver").val());
+                                }
+                                xd = setDataOfChartList['xd'];
+                                sd = setDataOfChartList['sd'];
+                                options.yAxis.push({
+                                    type: 'value',
+                                    max: maxData,
+                                    min: minData
+                                });
+                                //options.yAxis.max = maxData;
+                                //options.yAxis.min = minData;
+                                var s = new Series(carDataTypeSelectedName[i], xd, sd);
+                                var xStart = carDataTimeStart;
+                                var xEnd = carDataTimeEnd;
+                                options.xAxis.data = s.xdata;
+                                options.xAxis.start = xStart;
+                                options.xAxis.end = xEnd;
+
+                                ps = setDataOfChartList['ps'];
+                                $.each(ps,
+                                    function (n, value) {
+                                        options.visualMap.pieces.push(value);
+                                    });
+
+                                markAreaDataList = setDataOfChartList['markAreaDataList'];
+                                var markAreaData = [];
+                                $.each(markAreaDataList,
+                                    function (n, value) {
+                                        markAreaData.push([{ xAxis: xd[value[0]] }, { xAxis: xd[value[1]] }]);
+                                    });
+
+                                options.legend.data.push(options.title.text);
+                                options.series.push({
+                                    name: s.typeName,
+                                    type: 'line',
+                                    smooth: true,
+                                    data: s.seriesData,
+                                    markArea: {
+                                        itemStyle: {
+                                            color: 'rgba(255, 173, 177, 0.4)'
+                                        },
+                                        data: []
+                                    }
+                                });
+                                $.each(markAreaData,
+                                    function (n, value) {
+                                        options.series[0].markArea.data.push(value);
+                                    });
+
+                                myEChart.setOption(options);
+                            }
                         }                        
                         unLoading();
                     });
@@ -743,7 +828,6 @@
             }
         });
 
-        //CO2
         $("#computeSubmit").click(function (e) {
             var carStartupSelected = $("#carStartupSelect").val();
             var startTimeKey = $("#slider-range").slider("values", 0);
@@ -755,6 +839,7 @@
                 var endPrimaryValue = carDataJson[endTimeKey].primaryValue;
                 var startTime = carDataJson[startTimeKey].DateTime;
                 var endTime = carDataJson[endTimeKey].DateTime;
+
                 $.post("../Home/getCO2ByCarStartup", { 'carStartupSelected': carStartupSelected, 'startPrimaryValue': startPrimaryValue, 'endPrimaryValue': endPrimaryValue }, function (carCalculatedDataJson) {
                     carCalculatedDataJson = JSON.parse(carCalculatedDataJson);
                     var co2 = carCalculatedDataJson["CO2"];
@@ -763,8 +848,8 @@
                     $("#timeOfCO2").text("車輛啟動區間為： " + startTime + " ~ " + endTime);
                     $("#mileageOfCO2").text("啟動區間內行駛總里程為： " + mileage + " km");
                     $("#computeResultOfCO2").text("CO2: " + co2 + "kg");
-                    unLoading();
                 });
+                unLoading();
             });
         });
     });
