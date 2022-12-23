@@ -20,7 +20,7 @@
     <link href="~/lib/jquery-ui-1.13.2.custom/jquery-ui.css" rel="stylesheet" />
     <script src="~/lib/jquery-ui-1.13.2.custom/jquery-ui.min.js"></script>
     <script src="~/lib/jquery-ui-1.13.2.custom/jquery-ui.js"></script>
-    <script src="~/js/jquery.blockUI.js"></script>
+<script src="~/js/jquery/jquery.blockUI.js"></script>
 
 
 
@@ -673,6 +673,66 @@
             }
         }); 
 
+        //請選擇車輛資料類別和填入凸顯範圍 (複選) :
+        $("#o1").click(function () {
+            if ($("#SPDOver").attr("disabled"))
+                $("#SPDOver").removeAttr("disabled");
+            else
+                $("#SPDOver").attr("disabled", "disabled");
+        });
+        $("#o2").click(function () {
+            if ($("#engineSpeedOver").attr("disabled"))
+                $("#engineSpeedOver").removeAttr("disabled");
+            else
+                $("#engineSpeedOver").attr("disabled", "disabled");
+        });
+        $("#o3").click(function () {
+            if ($("#instantFuelOver").attr("disabled"))
+                $("#instantFuelOver").removeAttr("disabled");
+            else
+                $("#instantFuelOver").attr("disabled", "disabled");
+        });
+        $("#o4").click(function () {
+            if ($("#averageFuelOver").attr("disabled"))
+                $("#averageFuelOver").removeAttr("disabled");
+            else
+                $("#averageFuelOver").attr("disabled", "disabled");
+        });
+        $("#o5").click(function () {
+            if ($("#ODOOver").attr("disabled"))
+                $("#ODOOver").removeAttr("disabled");
+            else
+                $("#ODOOver").attr("disabled", "disabled");
+        });
+        $("#o6").click(function () {
+            if ($("#idleHoursOver").attr("disabled"))
+                $("#idleHoursOver").removeAttr("disabled");
+            else
+                $("#idleHoursOver").attr("disabled", "disabled");
+        });
+        $("#o7").click(function () {
+            if ($("#idleFuelOver").attr("disabled"))
+                $("#idleFuelOver").removeAttr("disabled");
+            else
+                $("#idleFuelOver").attr("disabled", "disabled");
+        });
+        $("#checkboxAllSelect").click(function () {
+            $.each(carDataTypeCheckboxSelectOver,
+                function (n, value) {
+                    if ($(value).attr('disabled')) {
+                        $(carDataTypeCheckboxSelect[n]).click();
+                    }
+                });
+        });
+        $("#checkboxAllCancel").click(function () {
+            $.each(carDataTypeCheckboxSelectOver,
+                function (n, value) {
+                    if (!$(value).attr('disabled')) {
+                        $(carDataTypeCheckboxSelect[n]).click();
+                    }
+                });
+        });
+
         $("#clearSubmit").click(function (e) {
             //重整網頁
             location.reload(true);
@@ -760,105 +820,7 @@
                         }
                         
                         if (carDataTypeSelected.length != 0){
-                            for (var i = 0; i < carDataTypeSelected.length; i++) {
-                                options = optionsDefinition();
-                                $("#chartArea").append("<div id=" + carDataTypeSelected[i] + " style = 'width: 100%; height: 500px;' > < /div>");
-                                var myEChart = echarts.init(document.getElementById(carDataTypeSelected[i]), 'shine');
-                                myEChart.clear();
-                                var xd = [], sd = [], ps = [];
-                                var maxData, minData;
-                                var setDataOfChartList;
-                                if (carDataTypeSelected[i] == "SPD") {
-                                    options.title.text += "Speed";
-                                    maxData = carDataJson[carDataJsonMax].SPD;
-                                    minData = carDataJson[carDataJsonMin].SPD;
-                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#SPDOver").val());
-                                }
-                                else if (carDataTypeSelected[i] == "engineSpeed") {
-                                    options.title.text += "Engine Speed";
-                                    maxData = carDataJson[carDataJsonMax].engineSpeed;
-                                    minData = carDataJson[carDataJsonMin].engineSpeed;
-                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#engineSpeedOver").val());
-                                }
-                                else if (carDataTypeSelected[i] == "instantFuel") {
-                                    options.title.text += "Instant Fuel";
-                                    maxData = carDataJson[carDataJsonMax].instantFuel;
-                                    minData = carDataJson[carDataJsonMin].instantFuel;
-                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#instantFuelOver").val());
-                                }
-                                else if (carDataTypeSelected[i] == "averageFuel") {
-                                    options.title.text += "Average Fuel";
-                                    maxData = carDataJson[carDataJsonMax].averageFuel;
-                                    minData = carDataJson[carDataJsonMin].averageFuel;
-                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#averageFuelOver").val());
-                                }
-                                else if (carDataTypeSelected[i] == "ODO") {
-                                    options.title.text += "Odometer";
-                                    maxData = carDataJson[carDataJsonMax].ODO;
-                                    minData = carDataJson[carDataJsonMin].ODO;
-                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#ODOOver").val());
-                                }
-                                else if (carDataTypeSelected[i] == "idleHours") {
-                                    options.title.text += "Idle Hours";
-                                    maxData = carDataJson[carDataJsonMax].idleHours;
-                                    minData = carDataJson[carDataJsonMin].idleHours;
-                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#idleHoursOver").val());
-                                }
-                                else if (carDataTypeSelected[i] == "idleFuel") {
-                                    options.title.text += "Idle Fuel";
-                                    maxData = carDataJson[carDataJsonMax].idleFuel;
-                                    minData = carDataJson[carDataJsonMin].idleFuel;
-                                    setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $("#idleFuelOver").val());
-                                }
-                                xd = setDataOfChartList['xd'];
-                                sd = setDataOfChartList['sd'];
-                                options.yAxis.push({
-                                    type: 'value',
-                                    max: maxData,
-                                    min: minData
-                                });
-                                //options.yAxis.max = maxData;
-                                //options.yAxis.min = minData;
-                                var s = new Series(carDataTypeSelectedName[i], xd, sd);
-                                var xStart = carDataTimeStart;
-                                var xEnd = carDataTimeEnd;
-                                options.xAxis.data = s.xdata;
-                                options.xAxis.start = xStart;
-                                options.xAxis.end = xEnd;
-
-                                ps = setDataOfChartList['ps'];
-                                $.each(ps,
-                                    function (n, value) {
-                                        options.visualMap.pieces.push(value);
-                                    });
-
-                                markAreaDataList = setDataOfChartList['markAreaDataList'];
-                                var markAreaData = [];
-                                $.each(markAreaDataList,
-                                    function (n, value) {
-                                        markAreaData.push([{ xAxis: xd[value[0]] }, { xAxis: xd[value[1]] }]);
-                                    });
-
-                                options.legend.data.push(options.title.text);
-                                options.series.push({
-                                    name: s.typeName,
-                                    type: 'line',
-                                    smooth: true,
-                                    data: s.seriesData,
-                                    markArea: {
-                                        itemStyle: {
-                                            color: 'rgba(255, 173, 177, 0.4)'
-                                        },
-                                        data: []
-                                    }
-                                });
-                                $.each(markAreaData,
-                                    function (n, value) {
-                                        options.series[0].markArea.data.push(value);
-                                    });
-
-                                myEChart.setOption(options);
-                            }
+                            drawAChart(carDataJson, carDataJsonLength, carDataTypeSelected, carDataTimeStart, carDataTimeEnd, carDataJsonMax, carDataJsonMin, carDataTypeSelectedName);
                         }                        
                         unLoading();
                     });
