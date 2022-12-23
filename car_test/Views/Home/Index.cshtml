@@ -20,7 +20,7 @@
     <link href="~/lib/jquery-ui-1.13.2.custom/jquery-ui.css" rel="stylesheet" />
     <script src="~/lib/jquery-ui-1.13.2.custom/jquery-ui.min.js"></script>
     <script src="~/lib/jquery-ui-1.13.2.custom/jquery-ui.js"></script>
-    <script src="~/js/jquery.blockui.js"></script>
+    <script src="~/js/jquery/jquery.blockUI.js"></script>
 
 
 
@@ -28,7 +28,7 @@
 
 <div class="text-center">
     <h1 class="display-4">車輛ESG查詢系統</h1>
-    @*<p>local version</p>*@
+    <p>local version</p>
 </div>
 
 @*<form style="margin-left:10px;">*@
@@ -60,7 +60,7 @@
 </div>
 
 <div class="selectArea">
-    <label>Correlation 分析(請任意選擇兩項資料以繪製在同一張圖表)： </label><br />
+    <label>可選擇任意兩項類別以繪製同一張圖表進行分析：</label><br />
     <select id="carDataTypeSelect1" name="carDataTypeSelect">
         <option value="">請選擇車輛資料類別</option>
     </select>、
@@ -75,7 +75,7 @@
 <div class="selectArea">
     <table>
         <tr>
-            Over/Under Threshold 分析(請選擇車輛資料) :
+            請選擇車輛資料類別和填入凸顯範圍 (複選) :
         </tr>
         <tr>
             <td>
@@ -189,52 +189,10 @@
 
 <script>
     $(document).ready(function () {
-        $("#CO2Compute").hide();
-        $("#CO2ComputeResultDiv").hide();
 
-        $("#o1").click(function () {
-            if($("#SPDOver").attr("disabled"))
-                $("#SPDOver").removeAttr("disabled");
-            else
-                $("#SPDOver").attr("disabled", "disabled");
-        });
-        $("#o2").click(function () {
-            if($("#engineSpeedOver").attr("disabled"))
-                $("#engineSpeedOver").removeAttr("disabled");
-            else
-                $("#engineSpeedOver").attr("disabled", "disabled");
-        });
-        $("#o3").click(function () {
-            if($("#instantFuelOver").attr("disabled"))
-                $("#instantFuelOver").removeAttr("disabled");
-            else
-                $("#instantFuelOver").attr("disabled", "disabled");
-        });
-        $("#o4").click(function () {
-            if($("#averageFuelOver").attr("disabled"))
-                $("#averageFuelOver").removeAttr("disabled");
-            else
-                $("#averageFuelOver").attr("disabled", "disabled");
-        });
-        $("#o5").click(function () {
-            if($("#ODOOver").attr("disabled"))
-                $("#ODOOver").removeAttr("disabled");
-            else
-                $("#ODOOver").attr("disabled", "disabled");
-        });
-        $("#o6").click(function () {
-            if($("#idleHoursOver").attr("disabled"))
-                $("#idleHoursOver").removeAttr("disabled");
-            else
-                $("#idleHoursOver").attr("disabled", "disabled");
-        });
-        $("#o7").click(function () {
-            if ($("#idleFuelOver").attr("disabled"))
-                $("#idleFuelOver").removeAttr("disabled");
-            else
-                $("#idleFuelOver").attr("disabled", "disabled");
-        });
-
+        //init
+        var carDataTypeCheckboxSelect = ['#o1', '#o2', '#o3', '#o4', '#o5', '#o6', '#o7'];
+        var carDataTypeCheckboxSelectOver = ['#SPDOver', '#engineSpeedOver', '#instantFuelOver', '#averageFuelOver', '#ODOOver', '#idleHoursOver', '#idleFuelOver'];
         var carDataTypesName = ['Speed', 'Engine Speed', 'Instant Fuel', 'Average Fuel', 'ODO', 'Idle Hours', 'Idle Fuel'];
         var carDataTypesValue = ['SPD', 'engineSpeed', 'instantFuel', 'averageFuel', 'ODO', 'idleHours', 'idleFuel'];
 
@@ -455,7 +413,86 @@
             return returnList;
         }
 
-        function drawDualYAxisChart(carDataJson, carDataJsonLength, carDataTypeSelected1, carDataTypeSelected2, carDataTimeStart, carDataTimeEnd) {            
+        function drawAChart(carDataJson, carDataJsonLength, carDataTypeSelected, carDataTimeStart, carDataTimeEnd, carDataJsonMax, carDataJsonMin, carDataTypeSelectedName) {
+            var options;
+            for (var i = 0; i < carDataTypeSelected.length; i++) {
+                options = optionsDefinition();
+                $("#chartArea").append("<div id=" + carDataTypeSelected[i] + " style = 'width: 100%; height: 500px;' > < /div>");
+                var myEChart = echarts.init(document.getElementById(carDataTypeSelected[i]), 'shine');
+                myEChart.clear();
+                var xd = [], sd = [], ps = [];
+                var maxData, minData;
+                var setDataOfChartList;
+
+                //carDataTypesValue = "SPD"
+                //carDataTypesName = "Speed"
+                //carDataTypeCheckboxSelectOver = "#SPDOver"
+                $.each(carDataTypesValue,
+                    function (n, value) {
+                        if (value == carDataTypeSelected[i]) {
+                            options.title.text += carDataTypesName[n];
+                            maxData = carDataJson[carDataJsonMax][value];
+                            minData = carDataJson[carDataJsonMin][value];
+                            setDataOfChartList = setDataOfChart(carDataJson, carDataJsonLength, carDataTypeSelected[i], carDataValueOver = $(carDataTypeCheckboxSelectOver[n]).val());
+                        }
+                    });
+
+                xd = setDataOfChartList['xd'];
+                sd = setDataOfChartList['sd'];
+                options.yAxis.push({
+                    type: 'value',
+                    max: maxData,
+                    min: minData
+                });
+                var s = new Series(carDataTypeSelectedName[i], xd, sd);
+                var xStart = carDataTimeStart;
+                var xEnd = carDataTimeEnd;
+                options.xAxis.data = s.xdata;
+                options.xAxis.start = xStart;
+                options.xAxis.end = xEnd;
+
+                ps = setDataOfChartList['ps'];
+                options["visualMap"] = {
+                    type: 'piecewise',
+                    seriesIndex: 0,
+                    show: false,
+                    dimension: 0,
+                    pieces: []
+                };
+                $.each(ps,
+                    function (n, value) {
+                        options.visualMap.pieces.push(value);
+                    });
+
+                markAreaDataList = setDataOfChartList['markAreaDataList'];
+                var markAreaData = [];
+                $.each(markAreaDataList,
+                    function (n, value) {
+                        markAreaData.push([{ xAxis: xd[value[0]] }, { xAxis: xd[value[1]] }]);
+                    });
+
+                options.legend.data.push(options.title.text);
+                options.series.push({
+                    name: s.typeName,
+                    type: 'line',
+                    smooth: true,
+                    data: s.seriesData,
+                    markArea: {
+                        itemStyle: {
+                            color: 'rgba(255, 173, 177, 0.4)'
+                        },
+                        data: []
+                    }
+                });
+                $.each(markAreaData,
+                    function (n, value) {
+                        options.series[0].markArea.data.push(value);
+                    });
+                myEChart.setOption(options);
+            }
+        }
+
+        function drawDualYAxisChart(carDataJson, carDataJsonLength, carDataTypeSelected1, carDataTypeSelected2, carDataTimeStart, carDataTimeEnd) {
             var carDataTypeSelectedName1 = $("#carDataTypeSelect1 option:selected").text();
             var carDataTypeSelectedName2 = $("#carDataTypeSelect2 option:selected").text();
             var options = optionsDoubleYAxis();
