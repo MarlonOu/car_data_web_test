@@ -13,26 +13,26 @@ namespace car_test.Models
 {
     public class userData
     {
-        public string Id { get; set; }
-        public string Password { get; set; }
-        public string? Token { get; set; }
-        public userData(string _Id, string _Password)
-        {
-            Id = _Id;
-            Password = _Password;
-            Token = getToken();
+        //public string Id { get; set; }
+        //public string Password { get; set; }
+        //public string? Token { get; set; }
+        //public userData(string _Id, string _Password)
+        //{
+        //    Id = _Id;
+        //    Password = _Password;
+        //    Token = getToken();
 
-        }
-        public bool checkUser()
-        {
-            return Token == databaseProcess.getDBToken(Id);
-        }
+        //}
+        //public bool checkUser()
+        //{
+        //    return Token == databaseProcess.getDBToken(Id);
+        //}
 
-        private string getToken()
-        {
-            string _Token = (Password+"asd1234").ToMD5();
-            return _Token;
-        }
+        //private string getToken()
+        //{
+        //    string _Token = (Password+"asd1234").ToMD5();
+        //    return _Token;
+        //}
 
     }
 }

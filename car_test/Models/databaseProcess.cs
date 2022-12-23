@@ -10,9 +10,9 @@ namespace car_test.Models
 {
     public class databaseProcess
     {
-        public static MySqlConnection conn = new MySqlConnection();
+        public MySqlConnection conn = new MySqlConnection();
 
-        public static void Connect(string databaseName)
+        public void Connect(string databaseName)
         {
             string connString = "server=120.117.72.61;port=3306;user id=J1939;password='P502_J1939_User';database=" + databaseName + ";charset=utf8;";
             conn.ConnectionString = connString;
@@ -20,12 +20,12 @@ namespace car_test.Models
                 conn.Open();
         }
 
-        public static void Disconnect()
+        public void Disconnect()
         {
             if (conn.State != ConnectionState.Closed)
                 conn.Close();
         }
-        
+
         public List<carRegistrationInformation> getSdCardNum()
         {
             try
@@ -80,7 +80,7 @@ namespace car_test.Models
                     }
                 }
                 Disconnect();
-                
+
                 return carDriverList;
             }
             catch (Exception ex)
@@ -126,7 +126,7 @@ namespace car_test.Models
                 {
                     sql = " SELECT `Date / Time` FROM `" + carStartDateTimeList[i].compareTableName + "` WHERE `primary_value` = 1";
                     cmd = new MySqlCommand(sql, conn);
-                    
+
                     using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
@@ -219,7 +219,7 @@ namespace car_test.Models
 
 
                 string sql = @"SELECT `Date / Time`, ";
-                for (int i=0; i < carDataTypeAllSelected.Length; i++)
+                for (int i = 0; i < carDataTypeAllSelected.Length; i++)
                 {
                     if (carDataTypeAllSelected[i] == "primaryValue")
                         sql = sql + "`primary_value`";
@@ -253,7 +253,7 @@ namespace car_test.Models
                     {
                         carData data = new carData();
                         data.DateTime = dr["Date / Time"].ToString();
-                        for (int i=0; i < carDataTypeAllSelected.Length; i++)
+                        for (int i = 0; i < carDataTypeAllSelected.Length; i++)
                         {
                             switch (carDataTypeAllSelected[i])//switch (比對的運算式)
                             {
@@ -278,7 +278,7 @@ namespace car_test.Models
                                     break;
 
                                 case "ODO":
-                                    data.ODO = float.Parse(dr["ODO"].ToString());                                             
+                                    data.ODO = float.Parse(dr["ODO"].ToString());
                                     break;
 
                                 case "idleHours":
@@ -292,7 +292,7 @@ namespace car_test.Models
                                 default:
                                     break;
                             }
-                        }                        
+                        }
                         //data.APP1 = float.Parse(dr["APP1"].ToString());
                         //data.BPP = float.Parse(dr["BPP"].ToString());
                         //data.Torque = dr["Torque"].ToString();
@@ -303,37 +303,6 @@ namespace car_test.Models
                     }
                 }
                 return carDataList;
-            }
-            catch (Exception ex)
-            {
-                string error = ex.ToString();
-                return null;
-            }
-            finally
-            {
-                Disconnect();
-            }
-        }
-
-        /*Hommy:Login*/
-        public static string getDBToken(string id)
-        {
-            try
-            {
-                string databaseName = "J1939_Car_User";
-                Connect(databaseName);
-                List<carRegistrationInformation> CarDataList = new List<carRegistrationInformation>();
-                string sql = @"SELECT `password` FROM `j1939_car_user_registration_information` where account = '" + id + "'";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-
-                using (MySqlDataReader dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        return dr["password"].ToString();
-                    }
-                }
-                return "none";
             }
             catch (Exception ex)
             {

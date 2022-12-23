@@ -18,39 +18,13 @@ namespace car_test.Controllers
             _logger = logger;
         }
 
-        /*Hommy:Login*/
         public IActionResult Index()
         {
-            if (HttpContext.Session.GetString("TOKEN") == null)
-            {
-                //return View("Login");
-                return Login(null);
-            }
             databaseProcess db = new databaseProcess();
             List<carRegistrationInformation> carSdCardNumList = db.getSdCardNum();
 
             ViewBag.carSdCardNumList = carSdCardNumList;
-
-            return View("Index");
-        }
-
-        /*Hommy:Login*/
-        [HttpPost]
-        public IActionResult Login(IFormCollection? post)
-        {
-            if (post == null) return View("Login");
-            databaseProcess db = new databaseProcess();
-
-            string id = post["id"];
-            string password = post["password"];
-            userData data = new userData(id, password);
-            if (!data.checkUser())
-            {
-                return View();
-            }
-            HttpContext.Session.SetString("ID", id);
-            HttpContext.Session.SetString("TOKEN", data.Token);
-            return Index();
+            return View();
         }
 
         public IActionResult getCarDriverList(string carSDCardNumSelected)
@@ -107,7 +81,7 @@ namespace car_test.Controllers
 
         public IActionResult getCarDataJson(string carStartupSelected, string[] carDataTypeAllSelected)
         {
-            databaseProcess db = new databaseProcess(); 
+            databaseProcess db = new databaseProcess();
             List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeAllSelected);
 
             string result = "";
@@ -121,6 +95,7 @@ namespace car_test.Controllers
                 //carDataList = dataProcessing.getDataByNoRepeating(carDataList);
                 carDataList = dataProcessing.getDataByAveragePerSecond(carDataList);
                 carDataList = dataProcessing.getValueOfMaxAndMin(carDataList, carDataTypeAllSelected);
+
                 result = JsonConvert.SerializeObject(carDataList);
 
                 //string to class property.
@@ -133,13 +108,15 @@ namespace car_test.Controllers
         public IActionResult getCarStartupAllTime(string carStartupSelected)
         {
             databaseProcess db = new databaseProcess();
-            string[] carDataTypeAllSelected = new string[] { "primaryValue"};
+            string[] carDataTypeAllSelected = new string[] { "primaryValue" };
             //DateTime start = DateTime.Now;
             List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeAllSelected);
             //DateTime end = DateTime.Now;
             //DateTime start1 = DateTime.Now;
             List<carData> carDataBySecList = dataProcessing.getCarDataBySec(carDataList);
             //DateTime end1 = DateTime.Now;
+
+
 
             string result = "";
             if (carDataBySecList == null)
@@ -157,10 +134,12 @@ namespace car_test.Controllers
         public IActionResult getCO2ByCarStartup(string carStartupSelected, int startPrimaryValue, int endPrimaryValue)
         {
             databaseProcess db = new databaseProcess();
-            string[] carDataTypeAllSelected = new string[] {"instantFuel", "ODO"};
+            string[] carDataTypeAllSelected = new string[] { "instantFuel", "ODO" };
             List<carData> carDataList = db.getCarDataList(carStartupSelected, carDataTypeAllSelected, startPrimaryValue, endPrimaryValue);
             List<carData> carDataBySecList = dataProcessing.getCarDataBySec(carDataList, dataParameterRequire: "CO2");
             carCalculatedData carCalculatedData = dataProcessing.computeCO2ByCarStartup(carDataBySecList);
+
+
 
             string result = "";
             if (carCalculatedData == null)
