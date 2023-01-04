@@ -193,6 +193,7 @@
         var carDataTypeCheckboxSelectOver = ['#SPDOver', '#engineSpeedOver', '#instantFuelOver', '#averageFuelOver', '#ODOOver', '#idleHoursOver', '#idleFuelOver'];
         var carDataTypesName = ['Speed', 'Engine Speed', 'Instant Fuel', 'Average Fuel', 'ODO', 'Idle Hours', 'Idle Fuel'];
         var carDataTypesValue = ['SPD', 'engineSpeed', 'instantFuel', 'averageFuel', 'ODO', 'idleHours', 'idleFuel'];
+        var carDataUnit = ['km/h', 'rpm', 'km/L', 'km/L', 'km', 'Hr', 'L']
 
         $("#CO2Compute").hide();
         $("#CO2ComputeResultDiv").hide();
@@ -342,6 +343,7 @@
                 var xd = [], sd = [], ps = [];
                 var maxData, minData;
                 var setDataOfChartList;
+                var dataUnit;
 
                 //carDataTypesValue = "SPD"
                 //carDataTypesName = "Speed"
@@ -349,6 +351,7 @@
                 $.each(carDataTypesValue,
                     function (n, value) {
                         if (value == carDataTypeSelected[i]) {
+                            dataUnit = carDataUnit[n];
                             options.title.text += carDataTypesName[n];
                             maxData = carDataJson[carDataJsonMax][value];
                             minData = carDataJson[carDataJsonMin][value];
@@ -360,6 +363,7 @@
                 sd = setDataOfChartList['sd'];
                 options.yAxis.push({
                     type: 'value',
+                    name: '單位( ' + dataUnit + ' )',
                     max: maxData,
                     min: minData
                 });
@@ -369,6 +373,21 @@
                 options.xAxis.data = s.xdata;
                 options.xAxis.start = xStart;
                 options.xAxis.end = xEnd;
+                options.tooltip['formatter'] = function (params) {
+                    var relVal = params[0].name;
+                    for (var i = 0; i < params.length; i++) {
+                        paramsDataUnit = '';
+                        for (var j = 0; j < carDataTypesName.length; j++){
+                            if (params[i].seriesName == carDataTypesName[j]){
+                                paramsDataUnit = carDataUnit[j];
+                                break;
+                            }
+                        }                        
+                        relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + ' ' + paramsDataUnit;
+                    }
+                    // relVal += '<br/>' + `<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:#00CBFF;"></span>` + params[0].seriesName + ' : ' + params[0].value + '%'
+                    return relVal
+                };
 
                 ps = setDataOfChartList['ps'];
                 options["visualMap"] = {
@@ -414,6 +433,7 @@
         function drawDualYAxisChart(carDataJson, carDataJsonLength, carDataTypeSelected1, carDataTypeSelected2, carDataTimeStart, carDataTimeEnd) {
             var carDataTypeSelectedName1 = $("#carDataTypeSelect1 option:selected").text();
             var carDataTypeSelectedName2 = $("#carDataTypeSelect2 option:selected").text();
+            var dataUnit1, dataUnit2;
             var options = optionsDefinition();
             $("#chartArea").append("<div id=test style = 'width: 100%; height: 500px;' > < /div>");
             var myEChart = echarts.init(document.getElementById("test"));
@@ -430,18 +450,42 @@
                     sd1.push(value[carDataTypeSelected1]);
                     sd2.push(value[carDataTypeSelected2]);
                 });
+            $.each(carDataTypesValue,
+                function (n, value) {
+                    if (value == carDataTypeSelected1) 
+                        dataUnit1 = carDataUnit[n];
+                    else if (value == carDataTypeSelected2)
+                        dataUnit2 = carDataUnit[n];
+                });            
 
             var s1 = new Series(carDataTypeSelectedName1, xd, sd1);
             var s2 = new Series(carDataTypeSelectedName2, xd, sd2);
-            var chartsList = [];
+            var chartsList = [], dataUnit = [];
             chartsList.push(s1);
             chartsList.push(s2);
+            dataUnit.push(dataUnit1);
+            dataUnit.push(dataUnit2);
 
             var xStart = carDataTimeStart;
             var xEnd = carDataTimeEnd;
             options.xAxis.data = xd;
             options.xAxis.start = xStart;
             options.xAxis.end = xEnd;
+            options.tooltip['formatter'] = function (params) {
+                var relVal = params[0].name;
+                for (var i = 0; i < params.length; i++) {
+                    paramsDataUnit = '';
+                    for (var j = 0; j < carDataTypesName.length; j++) {
+                        if (params[i].seriesName == carDataTypesName[j]) {
+                            paramsDataUnit = carDataUnit[j];
+                            break;
+                        }
+                    }
+                    relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + ' ' + paramsDataUnit;
+                }
+                // relVal += '<br/>' + `<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:#00CBFF;"></span>` + params[0].seriesName + ' : ' + params[0].value + '%'
+                return relVal
+            };
 
             $.each(chartsList,
                 function (j, value) {
@@ -449,7 +493,7 @@
                     options.yAxis.push({
                         position: j,
                         type: 'value',
-                        name: value.typeName,
+                        name: value.typeName + ' ( ' + dataUnit[j] + ' )',
                         alignTicks: true,
                         axisLine: {
                             show: true,
